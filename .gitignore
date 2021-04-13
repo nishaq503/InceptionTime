@@ -127,3 +127,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Local files
+.idea
+.vscode
+.inception
+data
+saved_models
+logs
+results
