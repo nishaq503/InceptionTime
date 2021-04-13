@@ -118,7 +118,7 @@ class DataGenerator(keras.utils.Sequence):
 if __name__ == '__main__':
     import utils
 
-    _datagen = DataGenerator(utils.DATA_PATHS, **utils.TEST_DATAGEN_PARAMS)
+    _datagen = DataGenerator(utils.RAW_DATA_PATHS, **utils.TEST_DATAGEN_PARAMS)
     _x, _y = _datagen.data_generation()
     print(f'batch_shape: {_x.shape}')
     print(f'batch_size: {len(_y)}')

@@ -5,6 +5,7 @@ import numpy as np
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
+from sklearn.preprocessing import normalize
 
 ROOT_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
@@ -22,7 +23,7 @@ DIRS = [
     RESULTS_DIR,
 ]
 
-DATA_PATHS = [
+RAW_DATA_PATHS = [
     (os.path.join(DATA_DIR, 'collection-2.npy'), [3, 4, 1, 2, 1, 1, 0, 0]),
     (os.path.join(DATA_DIR, 'collection-3.npy'), [1, 1, 3, 4, 1, 0, 2, 0]),
     (os.path.join(DATA_DIR, 'collection-4.npy'), [0, 4, 1, 3, 2, 0, 0, 1]),
@@ -30,11 +31,19 @@ DATA_PATHS = [
     (os.path.join(DATA_DIR, 'collection-6.npy'), [1, 2, 1, 3, 1, 4, 0, 0]),
 ]
 
+NORMALIZED_DATA_PATHS = [
+    (os.path.join(DATA_DIR, 'normalized-2.npy'), [3, 4, 1, 2, 1, 1, 0, 0]),
+    (os.path.join(DATA_DIR, 'normalized-3.npy'), [1, 1, 3, 4, 1, 0, 2, 0]),
+    (os.path.join(DATA_DIR, 'normalized-4.npy'), [0, 4, 1, 3, 2, 0, 0, 1]),
+    (os.path.join(DATA_DIR, 'normalized-5.npy'), [3, 0, 0, 1, 1, 2, 4, 1]),
+    (os.path.join(DATA_DIR, 'normalized-6.npy'), [1, 2, 1, 3, 1, 4, 0, 0]),
+]
+
 NUM_FEATURES = 4
 NUM_OUTLETS = 8
 NUM_CLASSES = 5
 
-TEST_WINDOW_LENGTH = 512
+TEST_WINDOW_LENGTH = 2056
 
 TEST_MODEL_PARAMS = {
     'input_shape': (TEST_WINDOW_LENGTH, NUM_FEATURES),
@@ -56,8 +65,8 @@ TEST_TRAIN_PARAMS = {
 TEST_DATAGEN_PARAMS = {
     'num_classes': NUM_CLASSES,
     'window_length': TEST_WINDOW_LENGTH,
-    'batch_size': 16 * NUM_OUTLETS,
-    'batches_per_epoch': 8,
+    'batch_size': 64 * NUM_OUTLETS,
+    'batches_per_epoch': 128,
 }
 
 
@@ -83,3 +92,16 @@ def calculate_metrics(
     accuracy: float = accuracy_score(y_true, y_pred)
     recall: float = recall_score(y_true, y_pred, average='macro')
     return precision, accuracy, recall
+
+
+def normalize_data():
+    for i in range(len(RAW_DATA_PATHS)):
+        raw_path, _ = RAW_DATA_PATHS[i]
+        normalized_path, _ = NORMALIZED_DATA_PATHS[i]
+
+        data = normalize(np.load(raw_path), axis=0)
+        np.save(normalized_path, data, allow_pickle=False, fix_imports=False)
+
+
+if __name__ == '__main__':
+    normalize_data()
